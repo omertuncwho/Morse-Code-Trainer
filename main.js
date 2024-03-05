@@ -1,4 +1,4 @@
-  const morseCodeMap = {
+const morseCodeMap = {
     'A': '.-', 'B': '-...', 'C': '-.-.', 'D': '-..', 'E': '.', 'F': '..-.', 'G': '--.', 'H': '....',
     'I': '..', 'J': '.---', 'K': '-.-', 'L': '.-..', 'M': '--', 'N': '-.', 'O': '---', 'P': '.--.',
     'Q': '--.-', 'R': '.-.', 'S': '...', 'T': '-', 'U': '..-', 'V': '...-', 'W': '.--', 'X': '-..-',
@@ -8,6 +8,9 @@
     ':': '---...', ';': '-.-.-.', '=': '-...-', '+': '.-.-.', '-': '-....-', '_': '..--.-', '"': '.-..-.',
     '$': '...-..-', '@': '.--.-.', ' ': '/'
   };
+
+  let speed = 5;
+  let currentPlayback = null;
 
   function convertToMorse() {
     const userInput = document.getElementById('inputText').value.toUpperCase();
@@ -23,13 +26,15 @@
         morseCodeDiv.innerHTML += `${character} - Character not supported<br>`;
       }
     }
+    updateStatistics(userInput.length);
   }
 
   function playMorseCode(morseCode) {
+    stopPlayback();
     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    const dotDuration = 100; // ms
+    const dotDuration = 100 / speed; // milliseconds
     const dashDuration = dotDuration * 3;
-    const frequency = 800; //hz
+    const frequency = 800; // Hz
     const oscillator = audioContext.createOscillator();
     oscillator.type = "sine";
     oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
@@ -38,17 +43,34 @@
     for (let morseIndex = 0; morseIndex < morseCode.length; morseIndex++) {
       switch (morseCode[morseIndex]) {
         case '.':
-          oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime + morseIndex * (dotDuration / 1000));
-          oscillator.start(audioContext.currentTime + morseIndex * (dotDuration / 1000));
-          oscillator.stop(audioContext.currentTime + (morseIndex + 1) * (dotDuration / 1000));
+          oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime + morseIndex * dotDuration / 1000);
+          oscillator.start(audioContext.currentTime + morseIndex * dotDuration / 1000);
+          oscillator.stop(audioContext.currentTime + (morseIndex + 1) * dotDuration / 1000);
           break;
         case '-':
-          oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime + morseIndex * (dashDuration / 1000));
-          oscillator.start(audioContext.currentTime + morseIndex * (dashDuration / 1000));
-          oscillator.stop(audioContext.currentTime + (morseIndex + 1) * (dashDuration / 1000));
+          oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime + morseIndex * dashDuration / 1000);
+          oscillator.start(audioContext.currentTime + morseIndex * dashDuration / 1000);
+          oscillator.stop(audioContext.currentTime + (morseIndex + 1) * dashDuration / 1000);
           break;
         default:
           break;
       }
     }
+    currentPlayback = oscillator;
+  }
+
+  function stopPlayback() {
+    if (currentPlayback) {
+      currentPlayback.stop();
+      currentPlayback = null;
+    }
+  }
+
+  function updateSpeed() {
+    speed = document.getElementById('speed').value;
+  }
+
+  function updateStatistics(characterCount) {
+    const statsDiv = document.getElementById('stats');
+    statsDiv.innerHTML = `Total Characters: ${characterCount}`;
   }

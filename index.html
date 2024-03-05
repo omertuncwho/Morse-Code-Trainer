@@ -4,17 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Morse Code Trainer</title>
-<style>
-  #morseCode {
-    font-size: 24px;
-  }
-</style>
 </head>
 <body>
 <h1>Morse Code Trainer</h1>
 <textarea id="inputText" rows="4" cols="50"></textarea><br>
-<button onclick="convertToMorse()">Start Training</button><br>
+<button onclick="convertToMorse()">Start Training</button>
+<button onclick="stopPlayback()">Stop</button>
+<label for="speed">Speed:</label>
+<input type="range" id="speed" min="1" max="10" value="5" onchange="updateSpeed()">
 <div id="morseCode"></div>
+<div id="stats"></div>
 <script src="main.js"></script>
 </body>
 </html>

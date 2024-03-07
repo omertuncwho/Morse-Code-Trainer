@@ -11,22 +11,35 @@ const morseCodeMap = {
 
 let speed = 5;
 let currentPlayback = null;
+let trainingInterval = null;
+let currentCharacter = null;
+let characterCount = 0;
+let correctCount = 0;
+let incorrectCount = 0;
 
-function convertToMorse() {
-  const userInput = document.getElementById('inputText').value.toUpperCase();
-  const morseCodeDiv = document.getElementById('morseCode');
-  morseCodeDiv.innerHTML = '';
-  for (let charIndex = 0; charIndex < userInput.length; charIndex++) {
-    const character = userInput[charIndex];
-    if (morseCodeMap.hasOwnProperty(character)) {
-      const morseCode = morseCodeMap[character];
-      morseCodeDiv.innerHTML += `${character} - ${morseCode}<br>`;
-      playMorseCode(morseCode);
-    } else {
-      morseCodeDiv.innerHTML += `${character} - Character not supported<br>`;
-    }
-  }
-  updateStatistics(userInput.length);
+function startTraining() {
+  stopTraining();
+  trainingInterval = setInterval(showNextCharacter, 2000);
+}
+
+function stopTraining() {
+  clearInterval(trainingInterval);
+  currentCharacter = null;
+  characterCount = 0;
+  correctCount = 0;
+  incorrectCount = 0;
+  updateStatistics();
+}
+
+function showNextCharacter() {
+  const characters = Object.keys(morseCodeMap);
+  const randomIndex = Math.floor(Math.random() * characters.length);
+  currentCharacter = characters[randomIndex];
+  const morseCode = morseCodeMap[currentCharacter];
+  document.getElementById('morseCode').innerHTML = `${currentCharacter} - ${morseCode}`;
+  playMorseCode(morseCode);
+  characterCount++;
+  updateStatistics();
 }
 
 function playMorseCode(morseCode) {
@@ -62,12 +75,7 @@ function playMorseCode(morseCode) {
   if (audioFeedbackEnabled) {
     oscillator.onended = () => {
       if (currentPlayback === oscillator) {
-        const nextCharacterIndex = morseCode.indexOf(' ', 1);
-        if (nextCharacterIndex !== -1) {
-          playMorseCode(morseCode.substring(nextCharacterIndex + 1));
-        } else {
-          currentPlayback = null;
-        }
+        currentPlayback = null;
       }
     };
   }
@@ -84,14 +92,18 @@ function updateSpeed() {
   speed = document.getElementById('speed').value;
 }
 
-function updateStatistics(characterCount) {
+function updateStatistics() {
   const statsDiv = document.getElementById('stats');
-  statsDiv.innerHTML = `Total Characters: ${characterCount}`;
+  statsDiv.innerHTML = `
+    Total Characters: ${characterCount}<br>
+    Correct: ${correctCount}<br>
+    Incorrect: ${incorrectCount}
+  `;
 }
 
 function clearInput() {
   document.getElementById('inputText').value = '';
   document.getElementById('morseCode').innerHTML = '';
   document.getElementById('stats').innerHTML = '';
-  stopPlayback();
+  stopTraining();
 }

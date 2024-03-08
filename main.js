@@ -29,6 +29,7 @@ function stopTraining() {
   correctCount = 0;
   incorrectCount = 0;
   updateStatistics();
+  document.getElementById('feedback').innerHTML = '';
 }
 
 function showNextCharacter() {
@@ -106,4 +107,16 @@ function clearInput() {
   document.getElementById('morseCode').innerHTML = '';
   document.getElementById('stats').innerHTML = '';
   stopTraining();
+}
+
+function checkInput() {
+  const userInput = document.getElementById('inputText').value.toUpperCase();
+  if (userInput === currentCharacter) {
+    document.getElementById('feedback').innerHTML = 'Correct!';
+    correctCount++;
+  } else {
+    document.getElementById('feedback').innerHTML = 'Incorrect. Try again.';
+    incorrectCount++;
+  }
+  updateStatistics();
 }

@@ -8,23 +8,27 @@
   #morseCode {
     font-size: 24px;
   }
-  .highlight {
-    background-color: yellow;
+  .highlight-correct {
+    color: green;
+  }
+  .highlight-incorrect {
+    color: red;
   }
 </style>
 </head>
 <body>
-<h1>Morse Code Trainer</h1>
-<textarea id="inputText" rows="4" cols="50"></textarea><br>
-<button onclick="convertToMorse()">Start Practice</button>
-<button onclick="stopPlayback()">Stop</button>
-<label for="speed">Speed:</label>
-<input type="range" id="speed" min="1" max="10" value="5" onchange="updateSpeed()">
-<div id="morseCode"></div>
-<div id="stats"></div>
-<button onclick="clearInput()">Clear</button>
-<input type="checkbox" id="audioFeedback" checked>
-<label for="audioFeedback">Audio Feedback</label>
+  <h1>Morse Code Trainer</h1>
+  <textarea id="inputText" rows="4" cols="50"></textarea><br>
+  <button onclick="startTraining()">Start Training</button>
+  <button onclick="stopTraining()">Stop</button>
+  <label for="speed">Speed:</label>
+  <input type="range" id="speed" min="1" max="10" value="5" onchange="updateSpeed()">
+  <div id="morseCode"></div>
+  <div id="feedback"></div>
+  <div id="stats"></div>
+  <button onclick="clearInput()">Clear</button>
+  <input type="checkbox" id="audioFeedback" checked>
+  <label for="audioFeedback">Audio Feedback</label>
 <script src="main.js"></script>
 </body>
 </html>
